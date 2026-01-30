@@ -108,7 +108,7 @@
               <v-icon icon="mdi-office-building-marker" color="white" size="20"></v-icon>
             </v-avatar>
           </template>
-          <v-list-item-title class="font-weight-bold text-body-2">KD Digitech</v-list-item-title>
+          <v-list-item-title class="font-weight-bold text-body-2">KD Capital</v-list-item-title>
           <v-list-item-subtitle class="text-caption">HQ Office</v-list-item-subtitle>
           <template #append>
             <v-icon icon="mdi-chevron-up-down" size="small" class="text-medium-emphasis"></v-icon>
