@@ -7,20 +7,17 @@ use App\Models\Permission;
 use App\Models\RolePermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PermissionController extends Controller
 {
-    // public function index()
-    // {
-    //     return Permission::all();
-    // }
-    // public function getPermissionByUser()
-    // {
-    //     return auth()->user()->getAllPermissions();
-    // }
     public function getPermissionByUser()
     {
-        $user = auth()->user();
+        $user = Auth::user();
+        
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
 
         if ($user->hasRole('super-admin')) {
             return Permission::all();
@@ -39,7 +36,6 @@ class PermissionController extends Controller
 
         $permission = Permission::create($request->all());
 
-        // Automatically assign new permission to super-admin role
         $superAdminRole = DB::table('roles')->where('slug', 'super-admin')->first();
         if ($superAdminRole) {
             RolePermission::create([

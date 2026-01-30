@@ -13,7 +13,7 @@
           prepend-icon="mdi-plus"
           @click="openCreateModal"
         >
-          Create Permission
+          Create
         </v-btn>
       </v-col>
     </v-row>
@@ -35,6 +35,11 @@
                   density="compact"
                 ></v-text-field>
               </v-col>
+              <v-col cols="12" md="6" class="text-right">
+                <v-chip size="small" color="info" variant="tonal">
+                  Total: {{ permissions.length }} permissions
+                </v-chip>
+              </v-col>
             </v-row>
           </v-card-title>
           <v-card-text>
@@ -45,6 +50,23 @@
               :loading="loading"
               class="elevation-0"
             >
+              <template v-slot:item.name="{ item }">
+                <div class="d-flex align-center">
+                  <v-icon size="small" color="primary" class="mr-2">mdi-key</v-icon>
+                  {{ item.name }}
+                </div>
+              </template>
+              
+              <template v-slot:item.group_name="{ item }">
+                <v-chip size="small" :color="getGroupColor(item.group_name)" variant="flat">
+                  {{ item.group_name }}
+                </v-chip>
+              </template>
+
+              <template v-slot:item.created_at="{ item }">
+                {{ formatDate(item.created_at) }}
+              </template>
+
               <template v-slot:item.actions="{ item }">
                 <v-btn
                   v-if="auth.can('update-permission')"
@@ -141,21 +163,40 @@ const loading = ref(false)
 const saving = ref(false)
 const isEditing = ref(false)
 const formRef = ref(null)
+const groupColors = {}
 
 const form = ref({
   id: null,
   name: '',
   slug: '',
-  group_name: ''  // added
+  group_name: ''
 })
 
 const headers = ref([
-  { title: 'ID', key: 'id', sortable: true },
+  { title: 'ID', key: 'id', sortable: true, width: 80 },
   { title: 'Name', key: 'name', sortable: true },
   { title: 'Slug', key: 'slug', sortable: true },
   { title: 'Group', key: 'group_name', sortable: true },
-  { title: 'Actions', key: 'actions', sortable: false, align: 'center' }
+  { title: 'Created', key: 'created_at', sortable: true },
+  { title: 'Actions', key: 'actions', sortable: false, align: 'center', width: 120 }
 ])
+
+const getGroupColor = (group) => {
+  if (!groupColors[group]) {
+    const colors = ['primary', 'success', 'warning', 'error', 'info', 'purple', 'teal', 'orange']
+    groupColors[group] = colors[Object.keys(groupColors).length % colors.length]
+  }
+  return groupColors[group]
+}
+
+const formatDate = (date) => {
+  if (!date) return '-'
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+}
 
 const fetchPermissions = async () => {
   loading.value = true

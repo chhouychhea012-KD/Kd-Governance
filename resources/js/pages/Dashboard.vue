@@ -54,7 +54,7 @@
           <v-card-text class="d-flex justify-space-between align-center">
             <div>
               <p class="text-subtitle-2 text-medium-emphasis mb-1">Total Evaluations</p>
-              <h2 class="text-h4 font-weight-bold">{{ stats.totalEvaluations }}</h2>
+              <h2 class="text-h4 font-weight-bold">0</h2>
             </div>
             <v-avatar color="warning" size="48">
               <v-icon>mdi-star</v-icon>

@@ -25,13 +25,6 @@ class UserSeeder extends Seeder
                 'team_id' => null, // Development Team
             ],
             [
-                'name' => 'CEO',
-                'email' => 'ceo@example.com',
-                'phone_number' => '1234567891',
-                'password' => Hash::make('password'),
-                'team_id' => null, // HR Team
-            ],
-            [
                 'name' => 'Admin',
                 'email' => 'admin@example.com',
                 'phone_number' => '1234567892',

@@ -39,16 +39,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'Create Teams', 'slug' => 'create-teams', 'group_name' => 'Team Management', 'description' => 'Create teams'],
             ['name' => 'Update Teams', 'slug' => 'update-teams', 'group_name' => 'Team Management', 'description' => 'Update teams'],
             ['name' => 'Delete Teams', 'slug' => 'delete-teams', 'group_name' => 'Team Management', 'description' => 'Delete teams'],
-            // Questions
-            ['name' => 'Read Question', 'slug' => 'read-question', 'group_name' => 'Question Management', 'description' => 'Read questions'],
-            ['name' => 'Create Question', 'slug' => 'create-question', 'group_name' => 'Question Management', 'description' => 'Create questions'],
-            ['name' => 'Update Question', 'slug' => 'update-question', 'group_name' => 'Question Management', 'description' => 'Update questions'],
-            ['name' => 'Delete Question', 'slug' => 'delete-question', 'group_name' => 'Question Management', 'description' => 'Delete questions'],
-            // Evaluations
-            ['name' => 'Read Evaluation', 'slug' => 'read-evaluation', 'group_name' => 'Evaluation', 'description' => 'Read evaluations'],
-            ['name' => 'Create Evaluation', 'slug' => 'create-evaluation', 'group_name' => 'Evaluation', 'description' => 'Create evaluations'],
-            ['name' => 'Update Evaluation', 'slug' => 'update-evaluation', 'group_name' => 'Evaluation', 'description' => 'Update evaluations'],
-            ['name' => 'Delete Evaluation', 'slug' => 'delete-evaluation', 'group_name' => 'Evaluation', 'description' => 'Delete evaluations'],
             // Settings
             ['name' => 'Read Setting', 'slug' => 'read-settings', 'group_name' => 'Settings', 'description' => 'Read settings'],
             ['name' => 'Create Setting', 'slug' => 'create-settings', 'group_name' => 'Settings', 'description' => 'Create settings'],
@@ -58,8 +48,6 @@ class PermissionSeeder extends Seeder
             ['name' => 'Read Dashboard', 'slug' => 'read-dashboard', 'group_name' => 'Dashboard', 'description' => 'Access dashboard'],
             // Reports
             ['name' => 'Read Report', 'slug' => 'read-report', 'group_name' => 'Reporting', 'description' => 'Read reports'],
-            // Improvements
-            ['name' => 'Read Improvement', 'slug' => 'read-improvements', 'group_name' => 'Evaluation', 'description' => 'Read improvements'],
         ];
 
         foreach ($permissions as $permission) {

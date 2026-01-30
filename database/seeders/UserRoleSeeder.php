@@ -15,7 +15,6 @@ class UserRoleSeeder extends Seeder
     {
         $userRoles = [
             ['email' => 'superadmin@example.com', 'role_name' => 'super-admin'],
-            ['email' => 'ceo@example.com', 'role_name' => 'ceo'],
             ['email' => 'admin@example.com', 'role_name' => 'admin'],
         ];
 
