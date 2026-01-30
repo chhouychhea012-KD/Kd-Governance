@@ -26,4 +26,38 @@ class Role extends Model
     {
         return $this->belongsToMany(Permission::class, 'role_permissions');
     }
+
+    /**
+     * Check if this role is super-admin.
+     */
+    public function isSuperAdmin(): bool
+    {
+        return $this->slug === 'super-admin';
+    }
+
+    /**
+     * Get all permissions for this role.
+     * If super-admin, return all permissions from the permissions table.
+     */
+    public function getAllPermissions()
+    {
+        if ($this->isSuperAdmin()) {
+            return Permission::all();
+        }
+
+        return $this->permissions;
+    }
+
+    /**
+     * Get the permission IDs for this role.
+     * If super-admin, return all permission IDs.
+     */
+    public function getPermissionIds()
+    {
+        if ($this->isSuperAdmin()) {
+            return Permission::pluck('id')->toArray();
+        }
+
+        return $this->permissions()->pluck('permissions.id')->toArray();
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\RolePermission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RolePermissionController extends Controller
 {
@@ -26,6 +27,12 @@ class RolePermissionController extends Controller
             'permission_id' => 'required|exists:permissions,id',
         ]);
 
+        // Check if role is super-admin
+        $role = DB::table('roles')->where('id', $request->role_id)->first();
+        if ($role && $role->slug === 'super-admin') {
+            return response()->json(['error' => 'Cannot manually add permissions to super-admin role'], 403);
+        }
+
         return RolePermission::create($request->all());
     }
 
@@ -44,6 +51,12 @@ class RolePermissionController extends Controller
     {
         $rolePermission = RolePermission::findOrFail($id);
 
+        // Check if role is super-admin
+        $role = DB::table('roles')->where('id', $rolePermission->role_id)->first();
+        if ($role && $role->slug === 'super-admin') {
+            return response()->json(['error' => 'Cannot update permissions for super-admin role'], 403);
+        }
+
         $request->validate([
             'role_id' => 'sometimes|required|exists:roles,id',
             'permission_id' => 'sometimes|required|exists:permissions,id',
@@ -60,6 +73,13 @@ class RolePermissionController extends Controller
     public function destroy($id)
     {
         $rolePermission = RolePermission::findOrFail($id);
+
+        // Check if role is super-admin
+        $role = DB::table('roles')->where('id', $rolePermission->role_id)->first();
+        if ($role && $role->slug === 'super-admin') {
+            return response()->json(['error' => 'Cannot delete permissions for super-admin role'], 403);
+        }
+
         $rolePermission->delete();
 
         return response()->noContent();
@@ -80,6 +100,12 @@ class RolePermissionController extends Controller
      */
     public function syncPermissions(Request $request, $roleId)
     {
+        // Check if role is super-admin
+        $role = DB::table('roles')->where('id', $roleId)->first();
+        if ($role && $role->slug === 'super-admin') {
+            return response()->json(['error' => 'Cannot modify permissions for super-admin role'], 403);
+        }
+
         $request->validate([
             'permission_ids' => 'required|array',
             'permission_ids.*' => 'exists:permissions,id',

@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Permission;
+use App\Models\RolePermission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PermissionController extends Controller
 {
@@ -26,6 +28,7 @@ class PermissionController extends Controller
 
         return $user->getAllPermissions();
     }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -34,7 +37,18 @@ class PermissionController extends Controller
             'group_name' => 'required|string|max:255',
         ]);
 
-        return Permission::create($request->all());
+        $permission = Permission::create($request->all());
+
+        // Automatically assign new permission to super-admin role
+        $superAdminRole = DB::table('roles')->where('slug', 'super-admin')->first();
+        if ($superAdminRole) {
+            RolePermission::create([
+                'role_id' => $superAdminRole->id,
+                'permission_id' => $permission->id,
+            ]);
+        }
+
+        return $permission;
     }
 
     public function show(Permission $permission)
@@ -46,18 +60,20 @@ class PermissionController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|max:255|unique:permissions,slug,' . $id,
+            'slug' => 'required|string|max:255|unique:permissions,slug,'.$id,
             'group_name' => 'required|string|max:255',
         ]);
 
         $permission = Permission::findOrFail($id);
         $permission->update($request->all());
+
         return $permission;
     }
 
     public function destroy(Permission $permission)
     {
         $permission->delete();
+
         return response()->noContent();
     }
 }

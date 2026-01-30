@@ -30,6 +30,14 @@
             </v-row>
           </v-card-title>
           <v-card-text>
+            <v-alert
+              v-if="selectedRole && roles.find(r => r.id === selectedRole)?.slug === 'super-admin'"
+              type="info"
+              variant="tonal"
+              class="mb-4"
+            >
+              Super Admin role has all permissions automatically and cannot be modified.
+            </v-alert>
             <v-data-table
               :headers="headers"
               :items="rolePermissions"
@@ -50,6 +58,7 @@
               </template>
               <template v-slot:item.actions="{ item }">
                 <v-btn
+                  v-if="item.role && item.role.slug !== 'super-admin'"
                   icon
                   size="small"
                   color="error"
@@ -58,6 +67,20 @@
                 >
                   <v-icon>mdi-delete</v-icon>
                 </v-btn>
+                <v-tooltip v-else text="Cannot modify super-admin permissions" location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-btn
+                      v-bind="props"
+                      icon
+                      size="small"
+                      color="grey"
+                      variant="text"
+                      disabled
+                    >
+                      <v-icon>mdi-lock</v-icon>
+                    </v-btn>
+                  </template>
+                </v-tooltip>
               </template>
             </v-data-table>
           </v-card-text>
@@ -74,7 +97,7 @@
           <v-form ref="formRef" @submit.prevent="saveRolePermission">
             <v-select
               v-model="form.role_id"
-              :items="roles"
+              :items="roles.filter(r => r.slug !== 'super-admin')"
               item-title="name"
               item-value="id"
               label="Role"

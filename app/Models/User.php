@@ -83,6 +83,11 @@ class User extends Authenticatable
      */
     public function getAllPermissions()
     {
+        // If user has super-admin role, return all permissions
+        if ($this->isSuperAdmin()) {
+            return Permission::all();
+        }
+
         $permissions = collect();
 
         // Add direct permissions

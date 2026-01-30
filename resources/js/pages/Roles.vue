@@ -64,7 +64,7 @@
                 <v-tooltip text="Manage Permissions" location="top">
                   <template v-slot:activator="{ props }">
                     <v-btn
-                      v-if="auth.can('read-role-permission')"
+                      v-if="auth.can('read-role-permission') && item.slug !== 'super-admin'"
                       v-bind="props"
                       icon="mdi-shield-key"
                       size="x-small"
@@ -77,7 +77,7 @@
                 </v-tooltip>
 
                 <v-btn
-                  v-if="auth.can('update-role')"
+                  v-if="auth.can('update-role') && item.slug !== 'super-admin'"
                   icon="mdi-pencil"
                   size="x-small"
                   color="primary"
@@ -87,7 +87,7 @@
                 ></v-btn>
 
                 <v-btn
-                  v-if="auth.can('delete-role')"
+                  v-if="auth.can('delete-role') && item.slug !== 'super-admin'"
                   icon="mdi-delete"
                   size="x-small"
                   color="error"
@@ -191,9 +191,21 @@
           </div>
 
           <template v-else>
+            <!-- Super Admin Info -->
+            <v-alert
+              v-if="selectedRole?.slug === 'super-admin'"
+              type="info"
+              variant="tonal"
+              class="mb-4"
+              icon="mdi-shield-check"
+            >
+              <strong>Super Admin Role</strong> automatically has all permissions. Permissions cannot be modified.
+            </v-alert>
+
             <!-- Global Check/Uncheck All -->
             <div class="mb-4 d-flex justify-center">
               <v-btn
+                v-if="selectedRole?.slug !== 'super-admin'"
                 :color="assignedPermissionIds.length === allPermissions.length ? 'error' : 'primary'"
                 variant="flat"
                 rounded="lg"
@@ -220,6 +232,7 @@
                   <span class="text-subtitle-2 text-uppercase">{{ groupName }}</span>
                   <v-spacer></v-spacer>
                   <v-btn
+                    v-if="selectedRole?.slug !== 'super-admin'"
                     size="x-small"
                     variant="flat"
                     :color="getGroupStatus(perms) === 'all' ? 'error' : 'primary'"
@@ -240,6 +253,7 @@
                     >
                       <v-checkbox
                         :model-value="isAssigned(permission.id)"
+                        :disabled="selectedRole?.slug === 'super-admin'"
                         density="compact"
                         hide-details
                         color="primary"

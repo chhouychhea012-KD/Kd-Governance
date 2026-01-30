@@ -41,6 +41,11 @@ class RoleController extends Controller
 
     public function update(Request $request, Role $role)
     {
+        // Prevent updating super-admin role
+        if ($role->slug === 'super-admin') {
+            return response()->json(['error' => 'Cannot update super-admin role'], 403);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
@@ -50,9 +55,14 @@ class RoleController extends Controller
     }
 
     public function destroy($id)
-{
-    // 1. Fetch the role or fail
+    {
+        // 1. Fetch the role or fail
         $role = Role::findOrFail($id);
+
+        // Prevent deleting super-admin role
+        if ($role->slug === 'super-admin') {
+            return response()->json(['error' => 'Cannot delete super-admin role'], 403);
+        }
 
         $currentUser = auth()->user();
         $currentUserHighestRole = $currentUser->roles()->orderBy('level', 'asc')->first();

@@ -13,9 +13,34 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        // First, get the super-admin role and assign ALL permissions to it
+        $superAdminRole = DB::table('roles')->where('slug', 'super-admin')->first();
+        if ($superAdminRole) {
+            // Get all permissions
+            $allPermissions = DB::table('permissions')->pluck('id')->toArray();
+            
+            // Delete existing super-admin permissions first
+            DB::table('role_permissions')->where('role_id', $superAdminRole->id)->delete();
+            
+            // Assign all permissions to super-admin
+            foreach ($allPermissions as $permissionId) {
+                DB::table('role_permissions')->updateOrInsert(
+                    [
+                        'role_id' => $superAdminRole->id,
+                        'permission_id' => $permissionId,
+                    ],
+                    [
+                        'role_id' => $superAdminRole->id,
+                        'permission_id' => $permissionId,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]
+                );
+            }
+        }
+
+        // Other roles with specific permissions
         $rolePermissions = [
-            // super_admin gets all
-            ['role_name' => 'super-admin', 'permissions' => ['Read User', 'Create User', 'Update User', 'Delete User', 'Read Role', 'Create Role', 'Update Role', 'Delete Role', 'Read Permission', 'Create Permission', 'Update Permission', 'Delete Permission', 'Read Role Permission', 'Create Role Permission', 'Update Role Permission', 'Delete Role Permission', 'Read Teams', 'Create Teams', 'Update Teams', 'Delete Teams', 'Read Question', 'Create Question', 'Update Question', 'Delete Question', 'Read Evaluation', 'Create Evaluation', 'Update Evaluation', 'Delete Evaluation', 'Read Setting', 'Create Setting', 'Update Setting', 'Delete Setting', 'Read Dashboard', 'Read Report', 'Read Improvement']],
             ['role_name' => 'ceo', 'permissions' => ['Read User', 'Create User', 'Update User', 'Delete User', 'Read Role', 'Create Role', 'Update Role', 'Delete Role', 'Read Permission', 'Create Permission', 'Update Permission', 'Delete Permission', 'Read Role Permission', 'Create Role Permission', 'Update Role Permission', 'Delete Role Permission', 'Read Teams', 'Create Teams', 'Update Teams', 'Delete Teams', 'Read Question', 'Create Question', 'Update Question', 'Delete Question', 'Read Evaluation', 'Create Evaluation', 'Update Evaluation', 'Delete Evaluation', 'Read Setting', 'Create Setting', 'Update Setting', 'Delete Setting', 'Read Dashboard', 'Read Report']],
             ['role_name' => 'admin', 'permissions' => ['Read User', 'Create User', 'Update User', 'Delete User', 'Read Teams', 'Create Teams', 'Update Teams', 'Delete Teams', 'Read Question', 'Create Question', 'Update Question', 'Delete Question', 'Read Evaluation', 'Create Evaluation', 'Update Evaluation', 'Delete Evaluation', 'Read Dashboard', 'Read Report']],
             ['role_name' => 'manager', 'permissions' => ['Read Teams', 'Create Teams', 'Update Teams', 'Delete Teams', 'Read Question', 'Create Question', 'Update Question', 'Delete Question', 'Read Evaluation', 'Create Evaluation', 'Update Evaluation', 'Delete Evaluation']],
