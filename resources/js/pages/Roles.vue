@@ -2,12 +2,12 @@
   <AuthenticatedLayout>
     <Head title="Roles" />
     
-    <v-row class="mb-4">
+    <v-row>
       <v-col cols="12" md="8">
         <h1 class="text-h4 font-weight-bold">Roles</h1>
         <p class="text-subtitle-1 text-medium-emphasis">Manage user roles and their hierarchy levels</p>
       </v-col>
-      <v-col cols="12" md="4" class="text-md-right">
+      <v-col cols="12" md="4" class="d-flex justify-md-end">
         <v-btn
           v-if="auth.can('create-role')"
           class="bg-primary px-6"
@@ -20,86 +20,84 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-        <v-card border flat class="rounded-lg">
-          <v-card-title class="pa-4">
-            <v-row align="center">
-              <v-col cols="12" md="4">
-                <v-text-field
-                  v-model="search"
-                  prepend-inner-icon="mdi-magnify"
-                  label="Search roles"
-                  single-line
-                  hide-details
-                  variant="outlined"
-                  density="compact"
-                  rounded="lg"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-card-title>
-          
-          <v-divider></v-divider>
-          
-          <v-data-table
-            :headers="headers"
-            :items="Array.isArray(roles) ? roles : []"
-            :search="search"
-            :loading="loading"
-            hover
-          >
-            <template v-slot:item.name="{ item }">
-              <span>{{ item.name }}</span>
-            </template>
-            
-            <template v-slot:item.level="{ item }">
-              <v-chip size="small" :color="item.level <= 1 ? 'error' : 'primary'" variant="flat">
-                Lvl {{ item.level }}
-              </v-chip>
-            </template>
+    <v-card border flat class="rounded-lg ">
+      <v-card-title class="py-3 px-4 d-flex align-center">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          label="Search roles"
+          single-line
+          hide-details
+          variant="outlined"
+          density="compact"
+          rounded="lg"
+          class="max-width-300"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-chip size="small" color="info" variant="tonal">
+          Total: {{ roles.length }}
+        </v-chip>
+      </v-card-title>
+      
+      <v-divider></v-divider>
+      
+      <v-data-table
+        :headers="headers"
+        :items="Array.isArray(roles) ? roles : []"
+        :search="search"
+        :loading="loading"
+        hover
+        class="elevation-0"
+      >
+        <template v-slot:item.name="{ item }">
+          <span>{{ item.name }}</span>
+        </template>
+        
+        <template v-slot:item.level="{ item }">
+          <v-chip size="small" :color="item.level <= 1 ? 'error' : 'primary'" variant="flat">
+            Lvl {{ item.level }}
+          </v-chip>
+        </template>
 
-            <template v-slot:item.actions="{ item }">
-              <div class="d-flex justify-center">
-                <v-tooltip text="Manage Permissions" location="top">
-                  <template v-slot:activator="{ props }">
-                    <v-btn
-                      v-if="auth.can('read-role-permission') && item.slug !== 'super-admin'"
-                      v-bind="props"
-                      icon="mdi-shield-key"
-                      size="x-small"
-                      color="info"
-                      variant="tonal"
-                      class="me-2"
-                      @click="managePermissions(item)"
-                    ></v-btn>
-                  </template>
-                </v-tooltip>
-
+        <template v-slot:item.actions="{ item }">
+          <div class="d-flex justify-center">
+            <v-tooltip text="Manage Permissions" location="top">
+              <template v-slot:activator="{ props }">
                 <v-btn
-                  v-if="auth.can('update-role') && item.slug !== 'super-admin'"
-                  icon="mdi-pencil"
+                  v-if="auth.can('read-role-permission') && item.slug !== 'super-admin'"
+                  v-bind="props"
+                  icon="mdi-shield-key"
                   size="x-small"
-                  color="primary"
+                  color="info"
                   variant="tonal"
                   class="me-2"
-                  @click="editRole(item)"
+                  @click="managePermissions(item)"
                 ></v-btn>
+              </template>
+            </v-tooltip>
 
-                <v-btn
-                  v-if="auth.can('delete-role') && item.slug !== 'super-admin'"
-                  icon="mdi-delete"
-                  size="x-small"
-                  color="error"
-                  variant="tonal"
-                  @click="confirmDelete(item)"
-                ></v-btn>
-              </div>
-            </template>
-          </v-data-table>
-        </v-card>
-      </v-col>
-    </v-row>
+            <v-btn
+              v-if="auth.can('update-role') && item.slug !== 'super-admin'"
+              icon="mdi-pencil"
+              size="x-small"
+              color="primary"
+              variant="tonal"
+              class="me-2"
+              @click="editRole(item)"
+            ></v-btn>
+
+            <v-btn
+              v-if="auth.can('delete-role') && item.slug !== 'super-admin'"
+              icon="mdi-delete"
+              size="x-small"
+              color="error"
+              variant="tonal"
+              @click="confirmDelete(item)"
+            ></v-btn>
+          </div>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <v-dialog v-model="dialog" max-width="500px" persistent>
       <v-card rounded="lg">
@@ -138,7 +136,7 @@
               label="Slug"
               :rules="[
                 v => !!v || 'Slug is required',
-                v => /^[a-z0-9-]+$/ .test(v) || 'Slug must be lowercase letters, numbers, and hyphens only'
+                v => /^[a-z0-9-]+$/.test(v) || 'Slug must be lowercase letters, numbers, and hyphens only'
               ]"
               required
               variant="outlined"

@@ -1,12 +1,13 @@
 <template>
   <AuthenticatedLayout>
     <Head title="Permissions" />
-    <v-row class="mb-4">
+    
+    <v-row>
       <v-col cols="12" md="8">
         <h1 class="text-h4 font-weight-bold">Permissions</h1>
         <p class="text-subtitle-1 text-medium-emphasis">Manage system permissions</p>
       </v-col>
-      <v-col cols="12" md="4" class="text-md-right">
+      <v-col cols="12" md="4" class="d-flex justify-md-end">
         <v-btn
           v-if="auth.can('create-permission')"
           class="bg-primary"
@@ -18,74 +19,70 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-        <v-card elevation="2">
-          <v-card-title>
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="search"
-                  prepend-inner-icon="mdi-magnify"
-                  label="Search permissions"
-                  single-line
-                  hide-details
-                  clearable
-                  variant="outlined"
-                  density="compact"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" class="text-right">
-                <v-chip size="small" color="info" variant="tonal">
-                  Total: {{ permissions.length }} permissions
-                </v-chip>
-              </v-col>
-            </v-row>
-          </v-card-title>
-          <v-card-text>
-            <v-data-table
-              :headers="headers"
-              :items="Array.isArray(permissions) ? permissions : []"
-              :search="search"
-              :loading="loading"
-              class="elevation-0"
+    <v-card elevation="2" >
+      <v-card-title class="py-3 px-4 d-flex align-center">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          label="Search permissions"
+          single-line
+          hide-details
+          clearable
+          variant="outlined"
+          density="compact"
+          class="max-width-300"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-chip size="small" color="info" variant="tonal">
+          Total: {{ permissions.length }}
+        </v-chip>
+      </v-card-title>
+      
+      <v-divider></v-divider>
+      
+      <v-card-text class="pa-0">
+        <v-data-table
+          :headers="headers"
+          :items="Array.isArray(permissions) ? permissions : []"
+          :search="search"
+          :loading="loading"
+          class="elevation-0"
+          hover
+        >
+          <template v-slot:item.name="{ item }">
+            <div class="d-flex align-center">
+              <v-icon size="small" color="primary" class="mr-2">mdi-key</v-icon>
+              {{ item.name }}
+            </div>
+          </template>
+          
+          <template v-slot:item.group_name="{ item }">
+            <v-chip size="small" :color="getGroupColor(item.group_name)" variant="flat">
+              {{ item.group_name }}
+            </v-chip>
+          </template>
+
+          <template v-slot:item.created_at="{ item }">
+            {{ formatDate(item.created_at) }}
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              v-if="auth.can('update-permission')"
+              icon size="small" color="primary" variant="text" @click="editPermission(item)"
             >
-              <template v-slot:item.name="{ item }">
-                <div class="d-flex align-center">
-                  <v-icon size="small" color="primary" class="mr-2">mdi-key</v-icon>
-                  {{ item.name }}
-                </div>
-              </template>
-              
-              <template v-slot:item.group_name="{ item }">
-                <v-chip size="small" :color="getGroupColor(item.group_name)" variant="flat">
-                  {{ item.group_name }}
-                </v-chip>
-              </template>
-
-              <template v-slot:item.created_at="{ item }">
-                {{ formatDate(item.created_at) }}
-              </template>
-
-              <template v-slot:item.actions="{ item }">
-                <v-btn
-                  v-if="auth.can('update-permission')"
-                  icon size="small" color="primary" variant="text" @click="editPermission(item)"
-                >
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn
-                  v-if="auth.can('delete-permission')"
-                  icon size="small" color="error" variant="text" @click="confirmDelete(item)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn
+              v-if="auth.can('delete-permission')"
+              icon size="small" color="error" variant="text" @click="confirmDelete(item)"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
 
     <v-dialog v-model="dialog" max-width="600px" persistent>
       <v-card>

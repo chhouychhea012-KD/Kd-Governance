@@ -152,8 +152,12 @@
     </v-navigation-drawer>
 
     <v-main class="bg-grey-lighten-5">
-      <v-container fluid class="pa-6" style="max-width: 1400px">
-        <slot />
+      <v-container fluid class="pa-4 pt-0 mt-3" style="min-height: calc(100vh - 48px)">
+        <v-row>
+          <v-col cols="12">
+            <slot />
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
 

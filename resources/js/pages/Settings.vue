@@ -1,12 +1,12 @@
 <template>
   <AuthenticatedLayout>
     <Head title="Settings" />
-    <v-row class="mb-4">
+    <v-row>
       <v-col cols="12" md="8">
-        <h1 class="text-h4 font-weight-bold">Settings</h1>
+        <h1 class="text-h4 font-weight-bold ">Settings</h1>
         <p class="text-subtitle-1 text-medium-emphasis">Manage application settings</p>
       </v-col>
-      <v-col cols="12" md="4" class="text-md-right">
+      <v-col cols="12" md="4" class="d-flex justify-md-end">
         <v-btn 
           class="bg-primary"
           prepend-icon="mdi-plus" 
@@ -17,55 +17,56 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-        <v-card elevation="2">
-          <v-card-title>
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="search"
-                  prepend-inner-icon="mdi-magnify"
-                  label="Search settings"
-                  single-line
-                  hide-details
-                  clearable
-                  variant="outlined"
-                  density="compact"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-card-title>
-          <v-card-text>
-            <v-data-table
-              :headers="headers"
-              :items="settings"
-              :search="search"
-              :loading="loading"
-              class="elevation-0"
-            >
-              <template v-slot:item.value="{ item }">
-                <div class="text-truncate" style="max-width: 200px;">
-                  {{ item.value || '-' }}
-                </div>
-              </template>
-              <template v-slot:item.actions="{ item }">
-                <v-btn icon size="small" color="primary" variant="text" @click="editSetting(item)">
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-btn icon size="small" color="error" variant="text" @click="confirmDelete(item)">
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+    <v-card elevation="2" >
+      <v-card-title class="py-3 px-4 d-flex align-center">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          label="Search settings"
+          single-line
+          hide-details
+          clearable
+          variant="outlined"
+          density="compact"
+          class="max-width-300"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-chip size="small" color="info" variant="tonal">
+          Total: {{ settings.length }}
+        </v-chip>
+      </v-card-title>
+      
+      <v-divider></v-divider>
+      
+      <v-card-text class="pa-0">
+        <v-data-table
+          :headers="headers"
+          :items="settings"
+          :search="search"
+          :loading="loading"
+          class="elevation-0"
+          hover
+        >
+          <template v-slot:item.value="{ item }">
+            <div class="text-truncate" style="max-width: 200px;">
+              {{ item.value || '-' }}
+            </div>
+          </template>
+          <template v-slot:item.actions="{ item }">
+            <v-btn icon size="small" color="primary" variant="text" @click="editSetting(item)">
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
+            <v-btn icon size="small" color="error" variant="text" @click="confirmDelete(item)">
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
 
     <v-dialog v-model="dialog" max-width="600px" persistent>
       <v-card>
-        <v-card-title class="text-h5">
+        <v-card-title class="text-h5 px-4 pt-4">
           {{ isEditing ? 'Edit Setting' : 'Create Setting' }}
         </v-card-title>
         <v-card-text>
@@ -99,7 +100,7 @@
             ></v-textarea>
           </v-form>
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="pb-4 px-4">
           <v-spacer></v-spacer>
           <v-btn variant="text" class="bg-black" @click="closeDialog">Cancel</v-btn>
           <v-btn color="primary" variant="elevated" @click="saveSetting" :loading="saving">
@@ -111,11 +112,11 @@
 
     <v-dialog v-model="deleteDialog" max-width="500px">
       <v-card>
-        <v-card-title class="text-h5">Confirm Delete</v-card-title>
-        <v-card-text>
+        <v-card-title class="text-h5 px-4 pt-4">Confirm Delete</v-card-title>
+        <v-card-text class="pa-4">
           Are you sure you want to delete this setting? This action cannot be undone.
         </v-card-text>
-        <v-card-actions>
+        <v-card-actions class="pb-4 px-4">
           <v-spacer></v-spacer>
           <v-btn variant="text" class="bg-black" @click="deleteDialog = false">Cancel</v-btn>
           <v-btn color="error" variant="elevated" @click="deleteSetting" :loading="deleting">Delete</v-btn>

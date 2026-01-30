@@ -2,14 +2,14 @@
   <AuthenticatedLayout>
     <Head title="Users" />
 
-    <v-row class="mb-4">
+    <v-row>
       <v-col cols="12" md="8">
         <h1 class="text-h4 font-weight-bold">Users</h1>
         <p class="text-subtitle-1 text-medium-emphasis">
           Manage user accounts and permissions
         </p>
       </v-col>
-      <v-col cols="12" md="4" class="text-md-right">
+      <v-col cols="12" md="4" class="d-flex justify-md-end">
         <v-btn
           v-if="$page.props.permissions?.some(p => p.slug === 'create-user')"
           class="bg-primary"
@@ -21,77 +21,78 @@
       </v-col>
     </v-row>
 
-    <v-row>
-      <v-col cols="12">
-        <v-card elevation="2">
-          <v-card-title>
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="search"
-                  prepend-inner-icon="mdi-magnify"
-                  label="Search users"
-                  single-line
-                  hide-details
-                  clearable
-                  variant="outlined"
-                  density="compact"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-card-title>
-          <v-card-text>
-            <v-data-table
-              :headers="headers"
-              :items="Array.isArray(users) ? users : []"
-              :search="search"
-              :loading="loading"
-              class="elevation-0"
+    <v-card elevation="2">
+      <v-card-title class="py-3 px-4 d-flex align-center">
+        <v-text-field
+          v-model="search"
+          prepend-inner-icon="mdi-magnify"
+          label="Search users"
+          single-line
+          hide-details
+          clearable
+          variant="outlined"
+          density="compact"
+          class="max-width-300"
+        ></v-text-field>
+        <v-spacer></v-spacer>
+        <v-chip size="small" color="info" variant="tonal">
+          Total: {{ users.length }}
+        </v-chip>
+      </v-card-title>
+      
+      <v-divider></v-divider>
+      
+      <v-card-text class="pa-0">
+        <v-data-table
+          :headers="headers"
+          :items="Array.isArray(users) ? users : []"
+          :search="search"
+          :loading="loading"
+          class="elevation-0"
+          hover
+        >
+          <template v-slot:item.team="{ item }">
+            <v-chip v-if="item.team" color="primary" size="small">
+              {{ item.team.name }}
+            </v-chip>
+            <span v-else class="text-medium-emphasis">N/A</span>
+          </template>
+
+          <template v-slot:item.sub_team="{ item }">
+            <v-chip v-if="item.sub_team" color="secondary" size="small">
+              {{ item.sub_team.name }}
+            </v-chip>
+            <span v-else class="text-medium-emphasis">-</span>
+          </template>
+
+          <template v-slot:item.actions="{ item }">
+            <v-btn
+              v-if="$page.props.permissions?.some(p => p.slug === 'update-user')"
+              icon size="small" color="primary" variant="text"
+              @click="editUser(item)"
             >
-              <template v-slot:item.team="{ item }">
-                <v-chip v-if="item.team" color="primary" size="small">
-                  {{ item.team.name }}
-                </v-chip>
-                <span v-else class="text-medium-emphasis">N/A</span>
-              </template>
+              <v-icon>mdi-pencil</v-icon>
+            </v-btn>
 
-              <template v-slot:item.sub_team="{ item }">
-                <v-chip v-if="item.sub_team" color="secondary" size="small">
-                  {{ item.sub_team.name }}
-                </v-chip>
-                <span v-else class="text-medium-emphasis">-</span>
-              </template>
+            <v-btn
+              v-if="$page.props.permissions?.some(p => p.slug === 'delete-user')"
+              icon size="small" color="error" variant="text"
+              @click="confirmDelete(item)"
+            >
+              <v-icon>mdi-delete</v-icon>
+            </v-btn>
 
-              <template v-slot:item.actions="{ item }">
-                <v-btn
-                  v-if="$page.props.permissions?.some(p => p.slug === 'update-user')"
-                  icon size="small" color="primary" variant="text"
-                  @click="editUser(item)"
-                >
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-
-                <v-btn
-                  v-if="$page.props.permissions?.some(p => p.slug === 'delete-user')"
-                  icon size="small" color="error" variant="text"
-                  @click="confirmDelete(item)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-
-                <v-btn
-                  v-if="$page.props.permissions?.some(p => p.slug === 'reset-password')"
-                  icon size="small" color="secondary" variant="text"
-                  @click="openResetPasswordModal(item)"
-                >
-                  <v-icon>mdi-lock-reset</v-icon>
-                </v-btn>
-              </template>
-            </v-data-table>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+            <v-btn
+              v-if="$page.props.permissions?.some(p => p.slug === 'reset-password')"
+              icon size="small" color="secondary" variant="text"
+              @click="openResetPasswordModal(item)"
+            >
+              <v-icon>mdi-lock-reset</v-icon>
+            </v-btn>
+          </template>
+        </v-data-table>
+      </v-card-text>
+    </v-card>
 
     <!-- Create/Edit User Dialog -->
     <v-dialog v-model="dialog" max-width="700px" persistent>
@@ -471,3 +472,4 @@ onMounted(() => {
   fetchRoles()
 })
 </script>
+
