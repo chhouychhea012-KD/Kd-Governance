@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 use App\Notifications\ResetPasswordNotification;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -72,7 +73,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
-        // Delete the current access token
+        /** @var PersonalAccessToken|null $currentToken */
         $currentToken = $request->user()->currentAccessToken();
         
         if ($currentToken) {
