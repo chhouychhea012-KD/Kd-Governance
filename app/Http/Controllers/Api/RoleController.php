@@ -12,6 +12,11 @@ class RoleController extends Controller
     {
         $currentUser = $request->user();
         
+        // If no authenticated user, return empty array
+        if (!$currentUser) {
+            return response()->json([], 200);
+        }
+        
         // Get the highest authority level of the current user (e.g., 2 for CEO)
         $currentUserLevel = $currentUser->roles()->min('level');
 
@@ -64,7 +69,7 @@ class RoleController extends Controller
             return response()->json(['error' => 'Cannot delete super-admin role'], 403);
         }
 
-        $currentUser = auth()->user();
+        $currentUser = auth()->guard()->user();
         $currentUserHighestRole = $currentUser->roles()->orderBy('level', 'asc')->first();
 
         // 2. Hierarchy Check
